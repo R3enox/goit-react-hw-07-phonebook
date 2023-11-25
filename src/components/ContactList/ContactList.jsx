@@ -1,0 +1,32 @@
+import { useDispatch, useSelector } from 'react-redux';
+
+import css from './ContactList.module.css';
+import { deleteContactsThunk } from 'redux/contacts/contactsThunk';
+import { selectContactsIsLoading } from 'redux/contacts/contactsSelectors';
+import { selectFilteredContacts } from 'redux/filters/filtersSelectors';
+import { Loader } from 'components/Loader/Loader';
+
+export const ContactList = () => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectContactsIsLoading);
+  const contacts = useSelector(selectFilteredContacts);
+
+  return (
+    <ul className={css.list}>
+      {isLoading && <Loader />}
+      {!isLoading &&
+        contacts.map(({ id, name, phone }) => (
+          <li key={id} className={css.listItem}>
+            {name}: {phone}
+            <button
+              disabled={isLoading}
+              onClick={() => dispatch(deleteContactsThunk(id))}
+              className={css.btnDel}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+    </ul>
+  );
+};
